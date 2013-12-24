@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.GraphId;
 
 public abstract class EntityBase {
@@ -12,7 +11,6 @@ public abstract class EntityBase {
 	@GraphId
 	protected Long id;
 	
-	@Transient
 	private String uuid;
 	private boolean deleted = false;
 	
@@ -25,7 +23,7 @@ public abstract class EntityBase {
 	
 	/* =================================================================== */
 	@SuppressWarnings("static-access")
-	protected void setUUID(String entityType) {
+	public void initialize(String entityType) {
 		this.uuid = UUID.nameUUIDFromBytes(entityType.getBytes()).randomUUID().toString();
 		entityCreatedDate = new Date();
 	}
@@ -52,6 +50,11 @@ public abstract class EntityBase {
 		return uuid.hashCode();
 	}
 
+	
+	
+	
+	
+	
 	/* **************************************************************************** */
 	public final Long getId() {
 		return id;
@@ -105,7 +108,10 @@ public abstract class EntityBase {
 		return uuid;
 	}
 
-
+	
+	public void setUUID(String uuid) {
+		this.uuid = uuid;
+	}
 	
 
 }

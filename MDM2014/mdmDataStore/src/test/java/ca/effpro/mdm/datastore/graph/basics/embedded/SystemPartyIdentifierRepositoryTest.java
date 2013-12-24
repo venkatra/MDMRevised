@@ -4,13 +4,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.PropertyContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -127,36 +124,105 @@ public class SystemPartyIdentifierRepositoryTest extends TestBase {
 	@Test
 	public void getOrCreateTest() {
 		SystemPartyIdentifier sysPartyId, updSysPartyId;
-		Node sysPartyIdNode;
 		String identifier = "A0003";
 		SourceSystemEnum src = SourceSystemEnum.STORES;
 
+		log.info("Cleanup ... ");
+		sysPartyId = sysPartyIdRepo.findByPropertyValue("identifier", identifier);
+		if(sysPartyId != null) {
+			//log.info("Deleting existing nodeid [" + sysPartyId.getId() + "] : "
+			//		+ sysPartyId.getUUID());
+			sysPartyIdRepo.delete(sysPartyId.getId());
+		}
+		
 		log.info("Creating for first time ... ");
-
 		sysPartyId = new SystemPartyIdentifier();
 		sysPartyId.setIdentifier(identifier);
 		sysPartyId.setSourceSystem(src);
-
+		sysPartyId.setDummy("A");
+		
+		sysPartyIdRepo.getOrCreateNodeEntity(
+				"SYSPARTY_IDENTIFIER", "identifier", 
+				sysPartyId.getIdentifier(), sysPartyId, neo4jTemplate);
+		
 		sysPartyId = sysPartyIdRepo.save(sysPartyId);
 		log.info("Saved nodeid [" + sysPartyId.getId() + "] : "
-				+ sysPartyId.getUUID());
+				+ sysPartyId.getUUID() + " - " + sysPartyId.getDummy());
 
-		log.info("Checking for existing ... ");
-		updSysPartyId = sysPartyIdRepo.findByPropertyValue("identifier", identifier);
-		log.info("Existing nodeid [" + updSysPartyId.getId() + "] : "
-				+ updSysPartyId.getUUID());
+		if(1==1)
+			return;
+		
 		
 		log.info("Updating via different instance ... ");
 		updSysPartyId = new SystemPartyIdentifier();
 		updSysPartyId.setIdentifier(identifier);
 		updSysPartyId.setSourceSystem(SourceSystemEnum.ONLINE);
 		
+		updSysPartyId.getNodeForSave(
+				"SYSPARTY_IDENTIFIER", "identifier", 
+				updSysPartyId.getIdentifier(), neo4jTemplate);
 		
 		updSysPartyId = sysPartyIdRepo.save(updSysPartyId);
+		  
 		log.info("Saved nodeid [" + updSysPartyId.getId() + "] : "
-				+ updSysPartyId.getUUID());
+				+ updSysPartyId.getUUID() + " - " + updSysPartyId.getDummy());
 		
+		log.info("Checking for existing ... ");
+		updSysPartyId = sysPartyIdRepo.findByPropertyValue("identifier", identifier);
+		log.info("Existing nodeid [" + updSysPartyId.getId() + "] : "
+				+ updSysPartyId.getUUID() + " - " + updSysPartyId.getDummy());
 		
 	}
 
+	
+	@Test
+	public void getOrCreateTest_v1() {
+		SystemPartyIdentifier sysPartyId, updSysPartyId;
+		String identifier = "A0003";
+		SourceSystemEnum src = SourceSystemEnum.STORES;
+
+		log.info("Cleanup ... ");
+		sysPartyId = sysPartyIdRepo.findByPropertyValue("identifier", identifier);
+		if(sysPartyId != null) {
+			//log.info("Deleting existing nodeid [" + sysPartyId.getId() + "] : "
+			//		+ sysPartyId.getUUID());
+			sysPartyIdRepo.delete(sysPartyId.getId());
+		}
+		
+		log.info("Creating for first time ... ");
+		sysPartyId = new SystemPartyIdentifier();
+		sysPartyId.setIdentifier(identifier);
+		sysPartyId.setSourceSystem(src);
+		sysPartyId.setDummy("A");
+		
+		sysPartyId.getNodeForSave(
+				"SYSPARTY_IDENTIFIER", "identifier", 
+				sysPartyId.getIdentifier(), neo4jTemplate);
+		
+		sysPartyId = sysPartyIdRepo.save(sysPartyId);
+		log.info("Saved nodeid [" + sysPartyId.getId() + "] : "
+				+ sysPartyId.getUUID() + " - " + sysPartyId.getDummy());
+
+		log.info("Updating via different instance ... ");
+		updSysPartyId = new SystemPartyIdentifier();
+		updSysPartyId.setIdentifier(identifier);
+		updSysPartyId.setSourceSystem(SourceSystemEnum.ONLINE);
+		
+		updSysPartyId.getNodeForSave(
+				"SYSPARTY_IDENTIFIER", "identifier", 
+				updSysPartyId.getIdentifier(), neo4jTemplate);
+		
+		updSysPartyId = sysPartyIdRepo.save(updSysPartyId);
+		  
+		log.info("Saved nodeid [" + updSysPartyId.getId() + "] : "
+				+ updSysPartyId.getUUID() + " - " + updSysPartyId.getDummy());
+		
+		log.info("Checking for existing ... ");
+		updSysPartyId = sysPartyIdRepo.findByPropertyValue("identifier", identifier);
+		log.info("Existing nodeid [" + updSysPartyId.getId() + "] : "
+				+ updSysPartyId.getUUID() + " - " + updSysPartyId.getDummy());
+		
+	}
+
+	
 }

@@ -18,6 +18,9 @@ public class SystemPartyIdentifier extends NodeBase {
 
 	private SourceSystemEnum sourceSystem;
 
+	@GraphProperty
+	private String dummy;
+	
 	@Fetch
 	@RelatedToVia( type = "IDENTIFIES_PARTY")
 	private IdentifiesPartyRelation identifiesPartyRel;
@@ -49,6 +52,14 @@ public class SystemPartyIdentifier extends NodeBase {
 
 	public final void setIdentifiesPartyRel(IdentifiesPartyRelation identifiesParty) {
 		this.identifiesPartyRel = identifiesParty;
+	}
+
+	public final String getDummy() {
+		return dummy;
+	}
+
+	public final void setDummy(String dummy) {
+		this.dummy = dummy;
 	}
 
 	
